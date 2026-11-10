@@ -8,7 +8,16 @@ export function invitationLink(side: InvitationSide) {
   return side === "bride" ? `${PUBLIC_SITE_URL}/bride` : `${PUBLIC_SITE_URL}/groom`;
 }
 
-const bride = {
+type ShareCard = {
+  title: string;
+  description: string;
+  message: string;
+  image: string;
+  imageWidth?: number;
+  imageHeight?: number;
+};
+
+const bride: ShareCard = {
   title: "Faziya Sherin's Nikah invitation",
   description:
     "Assalamu alaikum. You are invited to the Nikah of Faziya Sherin and Muhammed Jasir on Sunday, 6 December 2026 at 11:00 AM, AMANATH Convention Centre, Tirur. Come with your duas and let your presence make the morning complete.",
@@ -23,10 +32,12 @@ const bride = {
     "",
     "Bring your prayers and your joy. Your presence will make this morning gentle and blessed.",
   ].join("\n"),
-  image: "/bride/garden.jpg",
+  image: "/bride/rings.jpg",
+  imageWidth: 1280,
+  imageHeight: 720,
 };
 
-const groom = {
+const groom: ShareCard = {
   title: "Muhammed Jasir's wedding reception",
   description:
     "Assalamu alaikum. You are invited to the wedding reception of Muhammed Jasir and Faziya Sherin on Monday, 7 December 2026, 1:00 to 3:00 PM, at Shadhi Mahal Auditorium, Vadakara. Come share the afternoon and leave your blessings on the couple.",
@@ -58,7 +69,15 @@ export function invitationMetadata(side: InvitationSide): Metadata {
       description: share.description,
       type: "website",
       url: invitationLink(side),
-      images: [{ url: share.image, alt: share.title }],
+      images: [
+        {
+          url: share.image,
+          alt: share.title,
+          ...(share.imageWidth && share.imageHeight
+            ? { width: share.imageWidth, height: share.imageHeight }
+            : {}),
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
