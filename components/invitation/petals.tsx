@@ -29,13 +29,13 @@ function RosePetal({ tone }: { tone: "white" | "red" }) {
   );
 }
 
-export function PetalField() {
+export function PetalField({ tone = "mixed" }: { tone?: "mixed" | "white" }) {
   const [petals, setPetals] = useState<Petal[]>([]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
       setPetals(
-        Array.from({ length: 36 }, (_, index) => ({
+        Array.from({ length: tone === "white" ? 32 : 36 }, (_, index) => ({
           id: index,
           left: `${Math.random() * 100}%`,
           delay: `${-Math.random() * 16}s`,
@@ -43,12 +43,12 @@ export function PetalField() {
           sway: `${Math.round(Math.random() * 90 - 45)}px`,
           spin: `${Math.round(180 + Math.random() * 540)}deg`,
           size: 14 + Math.round(Math.random() * 16),
-          tone: Math.random() > 0.42 ? "red" : "white",
+          tone: tone === "white" ? "white" : Math.random() > 0.42 ? "red" : "white",
         })),
       );
     }, 0);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [tone]);
 
   return (
     <div aria-hidden>

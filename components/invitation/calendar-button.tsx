@@ -2,16 +2,26 @@
 
 import { useState } from "react";
 
-export function CalendarButton() {
+export function CalendarButton({
+  summary = "Wedding Reception: Muhammed Jasir & Faziya Sherin",
+  description = "With the blessings of Allah, celebrating the wedding of Muhammed Jasir & Faziya Sherin. Reception from 1:00 PM until 3:00 PM at Shadhi Mahal Auditorium.",
+  location = "Shadhi Mahal Auditorium, Vadakara, Kozhikode",
+  startUtc = "20261207T073000Z",
+  endUtc = "20261207T093000Z",
+  uid = "jasir-faziya-wedding-20261207@wedding",
+  filename = "jasir-faziya-wedding.ics",
+}: {
+  summary?: string;
+  description?: string;
+  location?: string;
+  startUtc?: string;
+  endUtc?: string;
+  uid?: string;
+  filename?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
-  // Event: 7 Dec 2026, 1:00 PM - 3:00 PM IST (UTC+5:30 => 07:30 - 09:30 UTC)
-  const title = encodeURIComponent("Wedding Reception: Muhammed Jasir & Faziya Sherin");
-  const details = encodeURIComponent(
-    "With the blessings of Allah, celebrating the wedding of Muhammed Jasir & Faziya Sherin. Reception from 1:00 PM until 3:00 PM at Shadhi Mahal Auditorium."
-  );
-  const location = encodeURIComponent("Shadhi Mahal Auditorium, Vadakara, Kozhikode");
-  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=20261207T073000Z/20261207T093000Z&details=${details}&location=${location}`;
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(summary)}&dates=${startUtc}/${endUtc}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}`;
 
   function downloadIcs() {
     const icsData = [
@@ -21,13 +31,13 @@ export function CalendarButton() {
       "CALSCALE:GREGORIAN",
       "METHOD:PUBLISH",
       "BEGIN:VEVENT",
-      "UID:jasir-faziya-wedding-20261207@wedding",
+      `UID:${uid}`,
       "DTSTAMP:20261110T000000Z",
-      "DTSTART:20261207T073000Z",
-      "DTEND:20261207T093000Z",
-      "SUMMARY:Wedding Reception: Muhammed Jasir & Faziya Sherin",
-      "DESCRIPTION:With the blessings of Allah, celebrating the wedding of Muhammed Jasir & Faziya Sherin.",
-      "LOCATION:Shadhi Mahal Auditorium, Vadakara, Kozhikode",
+      `DTSTART:${startUtc}`,
+      `DTEND:${endUtc}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      `LOCATION:${location}`,
       "STATUS:CONFIRMED",
       "END:VEVENT",
       "END:VCALENDAR",
@@ -36,14 +46,14 @@ export function CalendarButton() {
     const blob = new Blob([icsData], { type: "text/calendar;charset=utf-8" });
     const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute("download", "jasir-faziya-wedding.ics");
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
 
   function copyAddress() {
-    navigator.clipboard?.writeText("Shadhi Mahal Auditorium, Vadakara, Kozhikode, Kerala");
+    navigator.clipboard?.writeText(location);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2400);
   }

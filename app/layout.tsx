@@ -54,6 +54,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.APP_URL?.trim() || "http://localhost:3001"),
   title: {
     default: "Muhammed Jasir & Faziya Sherin",
     template: "%s · Jasir & Faziya",

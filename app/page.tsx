@@ -1,13 +1,8 @@
-import { DEFAULT_TIMEZONE, RECEPTION_START, WEDDING_DATE_ISO } from "@/lib/constants";
-import { eventMoment } from "@/lib/format";
-import { Celebration } from "@/components/invitation/celebration";
-import { PublicShell } from "@/components/invitation/shell";
+import { InvitePage } from "@/components/invitation/invite-page";
+import { invitationMetadata } from "@/lib/public-share";
+
+export const metadata = invitationMetadata("groom");
 
 export default function HomePage() {
-  const countdownTo = eventMoment(WEDDING_DATE_ISO, RECEPTION_START, DEFAULT_TIMEZONE);
-  return (
-    <PublicShell>
-      <Celebration countdownTo={countdownTo ?? ""} />
-    </PublicShell>
-  );
+  return <InvitePage side="groom" />;
 }

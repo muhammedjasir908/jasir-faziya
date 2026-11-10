@@ -58,6 +58,11 @@ body {
   color: #fbf6ef;
 }
 
+.invitation-garden {
+  background: #1a2614;
+  color: #f7f3e8;
+}
+
 .invitation-bg::before {
   content: "";
   position: absolute;
@@ -1074,6 +1079,11 @@ textarea.field {
   width: 100%;
 }
 
+.velora-share {
+  margin-top: 0.15rem;
+  background: transparent;
+}
+
 .velora-glass {
   width: min(100%, 22.5rem);
   border: 1px solid rgba(201, 160, 90, 0.38);
@@ -1161,6 +1171,38 @@ textarea.field {
 
 .scene-nav button[aria-current="true"] svg {
   stroke: #c9a05a;
+}
+
+.velora-bride.velora-frame,
+.velora-bride .velora-cover {
+  background: #1a2614;
+}
+
+.velora-bride .garden {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(16, 28, 14, 0.12), rgba(12, 22, 10, 0.42) 78%),
+    url("/bride/garden.jpg") center / cover no-repeat;
+}
+
+.velora-bride .garden-rose {
+  display: none;
+}
+
+.velora-bride .velora-open,
+.velora-bride .btn,
+.velora-bride .velora-actions .btn {
+  border-color: rgba(236, 226, 196, 0.55);
+  background: #2d4632;
+  color: #f7f3e8;
+}
+
+.velora-bride .velora-share {
+  background: transparent;
+}
+
+.velora-bride .scene-nav {
+  border-color: rgba(236, 226, 196, 0.35);
+  background: rgba(22, 34, 18, 0.92);
 }
 
 @media (prefers-reduced-motion: reduce) {

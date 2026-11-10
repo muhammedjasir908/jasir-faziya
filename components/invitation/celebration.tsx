@@ -12,23 +12,47 @@ import {
   GROOM_HOME,
   GROOM_MOTHER,
   MAPS_URL,
+  NIKAH_ADDRESS,
+  NIKAH_DATE_ISO,
+  NIKAH_DATE_LABEL,
+  NIKAH_MAPS_URL,
+  NIKAH_PLACE,
+  NIKAH_TIME,
+  NIKAH_VENUE,
   RECEPTION_ADDRESS,
   RECEPTION_TIME,
   RECEPTION_VENUE,
   VERSE_ENGLISH,
+  WEDDING_DATE_ISO,
   WEDDING_DATE_LABEL,
   WEDDING_PLACE,
+  type InvitationSide,
 } from "@/lib/constants";
 import { weddingDateParts } from "@/lib/format";
 import { CalendarButton } from "@/components/invitation/calendar-button";
 import { Countdown } from "@/components/invitation/countdown";
+import { ShareInvitation } from "@/components/invitation/share-invitation";
 
-export function Celebration({ countdownTo }: { countdownTo: string }) {
-  const date = weddingDateParts();
+export function Celebration({ countdownTo, side = "groom" }: { countdownTo: string; side?: InvitationSide }) {
+  const brideFirst = side === "bride";
+  const first = brideFirst ? BRIDE : GROOM;
+  const second = brideFirst ? GROOM : BRIDE;
+  const date = weddingDateParts(brideFirst ? NIKAH_DATE_ISO : WEDDING_DATE_ISO);
   const [opened, setOpened] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const dated = `${date.weekday}, ${date.rest}`;
   const [active, setActive] = useState<SectionId>("opening");
+  const sections = sectionsFor(side);
+  const timeLabel = brideFirst ? NIKAH_TIME : RECEPTION_TIME;
+  const venue = brideFirst ? NIKAH_VENUE : RECEPTION_VENUE;
+  const address = brideFirst ? NIKAH_ADDRESS : RECEPTION_ADDRESS;
+  const place = brideFirst ? NIKAH_PLACE : WEDDING_PLACE;
+  const mapsUrl = brideFirst ? NIKAH_MAPS_URL : MAPS_URL;
+  const dateLabel = brideFirst ? NIKAH_DATE_LABEL : WEDDING_DATE_LABEL;
+  const kicker = brideFirst ? "The Nikah of" : "The wedding of";
+  const ceremony = brideFirst ? "The Nikah" : "The reception";
+  const leadParents = brideFirst ? `${BRIDE_FATHER} & ${BRIDE_MOTHER}` : `${GROOM_FATHER} & ${GROOM_MOTHER}`;
+  const followParents = brideFirst ? `${GROOM_FATHER} & ${GROOM_MOTHER}` : `${BRIDE_FATHER} & ${BRIDE_MOTHER}`;
 
   useEffect(() => {
     document.body.style.overflow = opened ? "" : "hidden";
@@ -39,20 +63,20 @@ export function Celebration({ countdownTo }: { countdownTo: string }) {
 
   useEffect(() => {
     if (!opened) return;
-    const nodes = SECTIONS.map((section) => document.getElementById(section.id)).filter((node) => node instanceof HTMLElement);
+    const nodes = sectionsFor(side).map((section) => document.getElementById(section.id)).filter((node) => node instanceof HTMLElement);
     const observer = new IntersectionObserver(
       (entries) => {
         const hit = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         const id = hit?.target.id;
-        if (id && SECTIONS.some((section) => section.id === id)) setActive(id as SectionId);
+        if (id && sectionsFor(side).some((section) => section.id === id)) setActive(id as SectionId);
       },
       { threshold: [0.35, 0.55, 0.75] },
     );
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [opened]);
+  }, [opened, side]);
 
   function jumpTo(id: SectionId) {
     setActive(id);
@@ -72,7 +96,7 @@ export function Celebration({ countdownTo }: { countdownTo: string }) {
   }
 
   return (
-    <div className="velora velora-frame">
+    <div className={brideFirst ? "velora velora-frame velora-bride" : "velora velora-frame"}>
       <noscript>
         <style>{`.velora-cover{display:none !important}.velora-stage{display:block !important}`}</style>
       </noscript>
@@ -83,13 +107,14 @@ export function Celebration({ countdownTo }: { countdownTo: string }) {
             <Garden />
             <div className="relative z-10 flex flex-col items-center">
               <Rings />
-              <p className="velora-kicker mt-8">The wedding of</p>
-              <Names />
+              <p className="velora-kicker mt-8">{kicker}</p>
+              <Names first={first} second={second} />
               <p className="velora-date mt-6">{dated}</p>
               <p className="velora-copy mt-4 max-w-xs">We would be honoured by your presence.</p>
               <button type="button" className="velora-open" onClick={openInvitation}>
                 Open invitation
               </button>
+              <ShareInvitation side={side} />
             </div>
           </div>
         </div>
@@ -100,10 +125,10 @@ export function Celebration({ countdownTo }: { countdownTo: string }) {
 
         <section id="opening" className="velora-scene">
           <Rings />
-          <p className="velora-kicker mt-7">The wedding of</p>
-          <Names />
+          <p className="velora-kicker mt-7">{kicker}</p>
+          <Names first={first} second={second} />
           <p className="velora-date mt-6">{dated}</p>
-          <p className="velora-copy mt-3">{WEDDING_PLACE}</p>
+          <p className="velora-copy mt-3">{place}</p>
         </section>
 
         <section id="blessing" className="velora-scene">
@@ -112,47 +137,47 @@ export function Celebration({ countdownTo }: { countdownTo: string }) {
           <p className="velora-cite mt-6">Qur&apos;an 30:21</p>
         </section>
 
-        <section id="groom" className="velora-scene">
-          <p className="velora-kicker">The groom</p>
-          <h2 className="velora-person mt-4">{GROOM}</h2>
-          <p className="velora-copy mt-4">
-            Son of {GROOM_FATHER}
-            <br />&amp; {GROOM_MOTHER}
-          </p>
-          <p className="velora-place mt-4">{GROOM_HOME}</p>
-        </section>
-
-        <section id="bride" className="velora-scene">
-          <p className="velora-kicker">The bride</p>
-          <h2 className="velora-person mt-4">{BRIDE}</h2>
-          <p className="velora-copy mt-4">
-            Daughter of {BRIDE_FATHER}
-            <br />&amp; {BRIDE_MOTHER}
-          </p>
-          <p className="velora-place mt-4">{BRIDE_HOME}</p>
-        </section>
+        {brideFirst ? <BrideSection /> : <GroomSection />}
+        {brideFirst ? <GroomSection /> : <BrideSection />}
 
         <section id="date" className="velora-scene">
           <Countdown target={countdownTo} title="Save the date" />
           <p className="velora-date mt-6">
             {dated}
             <br />
-            {RECEPTION_TIME}
+            {timeLabel}
           </p>
         </section>
 
         <section id="venue" className="velora-scene">
           <div className="velora-glass">
-            <p className="velora-kicker">The gathering</p>
-            <h2 className="velora-person mt-4">{RECEPTION_VENUE}</h2>
+            <p className="velora-kicker">{ceremony}</p>
+            <h2 className="velora-person mt-4">{venue}</h2>
             <p className="velora-date mt-4">{dated}</p>
-            <p className="velora-date mt-1">{RECEPTION_TIME}</p>
-            <p className="velora-copy mt-4">{RECEPTION_ADDRESS}</p>
-            <a className="velora-open velora-open-link" href={MAPS_URL} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">
+            <p className="velora-date mt-1">{timeLabel}</p>
+            <p className="velora-copy mt-4">{address}</p>
+            <p className="velora-copy mt-3">
+              {brideFirst
+                ? "Please join the families for the Nikah at eleven in the morning."
+                : "Please join the families from one o’clock until three."}
+            </p>
+            <a className="velora-open velora-open-link" href={mapsUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">
               Open the location
             </a>
             <div className="velora-actions">
-              <CalendarButton />
+              <CalendarButton
+                summary={brideFirst ? "Nikah: Faziya Sherin & Muhammed Jasir" : "Wedding Reception: Muhammed Jasir & Faziya Sherin"}
+                description={
+                  brideFirst
+                    ? "With the blessings of Allah, the Nikah of Faziya Sherin and Muhammed Jasir at 11:00 AM at AMANATH Convention Centre."
+                    : "With the blessings of Allah, the reception of Muhammed Jasir and Faziya Sherin from 1:00 PM until 3:00 PM at Shadhi Mahal Auditorium."
+                }
+                location={brideFirst ? `${NIKAH_VENUE}, ${NIKAH_ADDRESS}` : `${RECEPTION_VENUE}, ${RECEPTION_ADDRESS}`}
+                startUtc={brideFirst ? "20261206T053000Z" : "20261207T073000Z"}
+                endUtc={brideFirst ? "20261206T063000Z" : "20261207T093000Z"}
+                uid={brideFirst ? "faziya-jasir-nikah-20261206@wedding" : "jasir-faziya-reception-20261207@wedding"}
+                filename={brideFirst ? "faziya-jasir-nikah.ics" : "jasir-faziya-reception.ics"}
+              />
             </div>
           </div>
         </section>
@@ -160,44 +185,65 @@ export function Celebration({ countdownTo }: { countdownTo: string }) {
         <section id="thanks" className="velora-scene">
           <p className="velora-kicker">Thank you</p>
           <h2 className="velora-script velora-script-end mt-4">
-            <span>Jasir</span>
+            <span>{brideFirst ? "Faziya" : "Jasir"}</span>
             <span className="amp">&</span>
-            <span>Faziya</span>
+            <span>{brideFirst ? "Jasir" : "Faziya"}</span>
           </h2>
           <p className="velora-copy mt-5 max-w-xs">
             Both families will be happy if you join them and keep them in your prayers.
           </p>
           <p className="velora-place mt-6">
-            {GROOM_FATHER} &amp; {GROOM_MOTHER}
+            {leadParents}
             <br />
-            {BRIDE_FATHER} &amp; {BRIDE_MOTHER}
+            {followParents}
           </p>
           <p className="velora-date mt-5">
-            {WEDDING_DATE_LABEL} · {WEDDING_PLACE}
+            {dateLabel} · {place}
           </p>
+          <ShareInvitation side={side} />
         </section>
       </div>
-      {opened ? <SceneNav active={active} onJump={jumpTo} /> : null}
+      {opened ? <SceneNav sections={sections} active={active} onJump={jumpTo} /> : null}
     </div>
   );
 }
 
-const SECTIONS = [
-  { id: "opening", label: "Opening" },
-  { id: "blessing", label: "Blessing" },
-  { id: "groom", label: "Groom" },
-  { id: "bride", label: "Bride" },
-  { id: "date", label: "Date" },
-  { id: "venue", label: "Venue" },
-  { id: "thanks", label: "Thanks" },
-] as const;
+const SECTION_IDS = ["opening", "blessing", "groom", "bride", "date", "venue", "thanks"] as const;
+type SectionId = (typeof SECTION_IDS)[number];
 
-type SectionId = (typeof SECTIONS)[number]["id"];
+function sectionsFor(side: InvitationSide) {
+  const couple: { id: SectionId; label: string }[] =
+    side === "bride"
+      ? [
+          { id: "bride", label: "Bride" },
+          { id: "groom", label: "Groom" },
+        ]
+      : [
+          { id: "groom", label: "Groom" },
+          { id: "bride", label: "Bride" },
+        ];
+  return [
+    { id: "opening" as const, label: "Opening" },
+    { id: "blessing" as const, label: "Blessing" },
+    ...couple,
+    { id: "date" as const, label: "Date" },
+    { id: "venue" as const, label: "Venue" },
+    { id: "thanks" as const, label: "Thanks" },
+  ];
+}
 
-function SceneNav({ active, onJump }: { active: SectionId; onJump: (id: SectionId) => void }) {
+function SceneNav({
+  sections,
+  active,
+  onJump,
+}: {
+  sections: { id: SectionId; label: string }[];
+  active: SectionId;
+  onJump: (id: SectionId) => void;
+}) {
   return (
     <nav className="scene-nav no-print" aria-label="Invitation sections">
-      {SECTIONS.map((section) => (
+      {sections.map((section) => (
         <button
           key={section.id}
           type="button"
@@ -259,13 +305,41 @@ function SectionIcon({ id }: { id: SectionId }) {
   );
 }
 
-function Names() {
+function Names({ first, second }: { first: string; second: string }) {
   return (
     <h1 className="velora-script">
-      <span>{GROOM}</span>
+      <span>{first}</span>
       <span className="amp">&</span>
-      <span>{BRIDE}</span>
+      <span>{second}</span>
     </h1>
+  );
+}
+
+function GroomSection() {
+  return (
+    <section id="groom" className="velora-scene">
+      <p className="velora-kicker">The groom</p>
+      <h2 className="velora-person mt-4">{GROOM}</h2>
+      <p className="velora-copy mt-4">
+        Son of {GROOM_FATHER}
+        <br />&amp; {GROOM_MOTHER}
+      </p>
+      <p className="velora-place mt-4">{GROOM_HOME}</p>
+    </section>
+  );
+}
+
+function BrideSection() {
+  return (
+    <section id="bride" className="velora-scene">
+      <p className="velora-kicker">The bride</p>
+      <h2 className="velora-person mt-4">{BRIDE}</h2>
+      <p className="velora-copy mt-4">
+        Daughter of {BRIDE_FATHER}
+        <br />&amp; {BRIDE_MOTHER}
+      </p>
+      <p className="velora-place mt-4">{BRIDE_HOME}</p>
+    </section>
   );
 }
 
