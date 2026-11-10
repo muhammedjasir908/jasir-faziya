@@ -3,15 +3,14 @@
 import { useState } from "react";
 
 import type { InvitationSide } from "@/lib/constants";
-import { publicShare } from "@/lib/public-share";
+import { invitationLink, publicShare } from "@/lib/public-share";
 
 export function ShareInvitation({ side }: { side: InvitationSide }) {
   const [note, setNote] = useState("");
 
   async function onShare() {
     const share = publicShare(side);
-    const path = side === "bride" ? "/bride" : window.location.pathname === "/" ? "/" : "/groom";
-    const url = `${window.location.origin}${path}`;
+    const url = invitationLink(side);
     const full = `${share.message}\n\n${url}`;
     try {
       if (navigator.share) {

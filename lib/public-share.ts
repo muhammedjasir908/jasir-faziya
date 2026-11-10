@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 
 import type { InvitationSide } from "@/lib/constants";
 
+export const PUBLIC_SITE_URL = "https://jasir-faziya.vercel.app";
+
+export function invitationLink(side: InvitationSide) {
+  return side === "bride" ? `${PUBLIC_SITE_URL}/bride` : `${PUBLIC_SITE_URL}/groom`;
+}
+
 const bride = {
   title: "Faziya Sherin's Nikah invitation",
   description:
@@ -51,6 +57,7 @@ export function invitationMetadata(side: InvitationSide): Metadata {
       title: share.title,
       description: share.description,
       type: "website",
+      url: invitationLink(side),
       images: [{ url: share.image, alt: share.title }],
     },
     twitter: {

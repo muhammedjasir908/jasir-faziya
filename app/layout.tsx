@@ -54,7 +54,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL?.trim() || "http://localhost:3001"),
+  metadataBase: new URL("https://jasir-faziya.vercel.app"),
   title: {
     default: "Muhammed Jasir & Faziya Sherin",
     template: "%s · Jasir & Faziya",
