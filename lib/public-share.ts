@@ -32,9 +32,9 @@ const bride: ShareCard = {
     "",
     "Bring your prayers and your joy. Your presence will make this morning gentle and blessed.",
   ].join("\n"),
-  image: "/share/couple.jpg",
-  imageWidth: 681,
-  imageHeight: 1024,
+  image: "/share/preview.jpg",
+  imageWidth: 1200,
+  imageHeight: 630,
 };
 
 const groom: ShareCard = {
@@ -52,9 +52,9 @@ const groom: ShareCard = {
     "",
     "Join the celebration and keep the couple in your duas.",
   ].join("\n"),
-  image: "/share/couple.jpg",
-  imageWidth: 681,
-  imageHeight: 1024,
+  image: "/share/preview.jpg",
+  imageWidth: 1200,
+  imageHeight: 630,
 };
 
 export function publicShare(side: InvitationSide) {
@@ -75,6 +75,7 @@ export function invitationMetadata(side: InvitationSide): Metadata {
         {
           url: share.image,
           alt: share.title,
+          type: "image/jpeg",
           ...(share.imageWidth && share.imageHeight
             ? { width: share.imageWidth, height: share.imageHeight }
             : {}),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   BRIDE,
@@ -31,6 +31,7 @@ import {
 import { weddingDateParts } from "@/lib/format";
 import { CalendarButton } from "@/components/invitation/calendar-button";
 import { Countdown } from "@/components/invitation/countdown";
+import { InvitationMusic, type MusicControl } from "@/components/invitation/invitation-music";
 import { ShareInvitation } from "@/components/invitation/share-invitation";
 
 export function Celebration({ countdownTo, side = "groom" }: { countdownTo: string; side?: InvitationSide }) {
@@ -38,6 +39,7 @@ export function Celebration({ countdownTo, side = "groom" }: { countdownTo: stri
   const first = brideFirst ? BRIDE : GROOM;
   const second = brideFirst ? GROOM : BRIDE;
   const date = weddingDateParts(brideFirst ? NIKAH_DATE_ISO : WEDDING_DATE_ISO);
+  const musicRef = useRef<MusicControl>(null);
   const [opened, setOpened] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const dated = `${date.weekday}, ${date.rest}`;
@@ -86,6 +88,7 @@ export function Celebration({ countdownTo, side = "groom" }: { countdownTo: stri
 
   function openInvitation() {
     if (opened || leaving) return;
+    musicRef.current?.play();
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       setOpened(true);
@@ -97,6 +100,7 @@ export function Celebration({ countdownTo, side = "groom" }: { countdownTo: stri
 
   return (
     <div className={brideFirst ? "velora velora-frame velora-bride" : "velora velora-frame"}>
+      <InvitationMusic controlRef={musicRef} />
       <noscript>
         <style>{`.velora-cover{display:none !important}.velora-stage{display:block !important}`}</style>
       </noscript>

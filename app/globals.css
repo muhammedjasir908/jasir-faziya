@@ -1118,6 +1118,47 @@ textarea.field {
   color: #c9a05a;
 }
 
+.music-toggle {
+  position: fixed;
+  z-index: 60;
+  top: 14px;
+  right: max(12px, calc(50vw - 208px));
+  display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+  border: 1px solid rgba(201, 160, 90, 0.55);
+  border-radius: 999px;
+  background: rgba(24, 11, 13, 0.86);
+  color: #f8ecdd;
+}
+
+.music-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.music-toggle[aria-pressed="true"] {
+  background: rgba(201, 160, 90, 0.22);
+  color: #e4c98a;
+}
+
+.velora-bride .music-toggle {
+  border-color: rgba(236, 226, 196, 0.45);
+  background: rgba(22, 34, 18, 0.9);
+  color: #f7f3e8;
+}
+
+.velora-bride .music-toggle[aria-pressed="true"] {
+  background: rgba(236, 226, 196, 0.2);
+  color: #f3e7c4;
+}
+
 .scene-nav {
   position: fixed;
   z-index: 50;
