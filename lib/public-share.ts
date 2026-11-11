@@ -4,8 +4,12 @@ import type { InvitationSide } from "@/lib/constants";
 
 export const PUBLIC_SITE_URL = "https://jasir-faziya.vercel.app";
 
+/** Bumps the shared URL so WhatsApp fetches a new preview instead of a saved one. */
+const SHARE_VERSION = "20261111";
+
 export function invitationLink(side: InvitationSide) {
-  return side === "bride" ? `${PUBLIC_SITE_URL}/bride` : `${PUBLIC_SITE_URL}/groom`;
+  const path = side === "bride" ? "/bride" : "/groom";
+  return `${PUBLIC_SITE_URL}${path}?v=${SHARE_VERSION}`;
 }
 
 type ShareCard = {
@@ -32,7 +36,7 @@ const bride: ShareCard = {
     "",
     "Bring your prayers and your joy. Your presence will make this morning gentle and blessed.",
   ].join("\n"),
-  image: "/share/preview.jpg",
+  image: `/share/card.jpg?v=${SHARE_VERSION}`,
   imageWidth: 1200,
   imageHeight: 630,
 };
@@ -52,7 +56,7 @@ const groom: ShareCard = {
     "",
     "Join the celebration and keep the couple in your duas.",
   ].join("\n"),
-  image: "/share/preview.jpg",
+  image: `/share/card.jpg?v=${SHARE_VERSION}`,
   imageWidth: 1200,
   imageHeight: 630,
 };
